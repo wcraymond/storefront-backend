@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express';
 import { User, UserStore } from '../models/user';
+import verifyAuthToken from '../middleware/verifyAuthToken';
+import jwt from 'jsonwebtoken';
 
 const store = new UserStore();
 
@@ -26,52 +28,40 @@ const show = async (req: Request, res: Response): Promise<void> => {
 const create = async (req: Request, res: Response): Promise<void> => {
   try {
     const user: User = {
+      username: req.body.username,
       first_name: req.body.first_name,
       last_name: req.body.last_name,
       password: req.body.password
     };
-
     const newUser = await store.create(user);
-    res.json(newUser);
+    // Sign JWT
+    const token = jwt.sign({ user: newUser }, process.env.TOKEN_SECRET as string);
+    res.json(token);
   } catch (err) {
     res.status(400);
     res.json(err);
   }
 }
 
-const update = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const user: User = {
-      id: parseInt(req.params.id),
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      password: req.body.password
-    };
+const authenticate = async (req: Request, res: Response): Promise<void> => {
+  const username: string = req.body.username;
+  const password: string = req.body.password;
 
-    const updatedUser = await store.update(user);
-    res.json(updatedUser);
-  } catch (err) {
-    res.status(400);
-    res.json(err);
-  }
-}
-
-const destroy = async (req: Request, res: Response): Promise<void> => {
   try {
-    const deleted = await store.delete(req.params.id);
-    res.json(deleted);
+    const authenticatedUser = await store.authenticate(username, password);
+    const token = jwt.sign({ user: authenticatedUser }, process.env.TOKEN_SECRET as string);
+    res.json(token);
   } catch (err) {
-    res.status(400);
+    res.status(401);
     res.json(err);
   }
 }
 
 const userRoutes = (app: express.Application) => {
-  app.get('/users', index);
-  app.get('/users/:id', show);
-  app.post('/users', create);
-  app.put('/users/:id', update);
-  app.delete('/products/:id', destroy);
+  app.get('/users', verifyAuthToken, index);
+  app.get('/users/:id', verifyAuthToken, show);
+  app.post('/users', verifyAuthToken, create);
+  app.post('/users/authenticate', authenticate);
 }
 
 export default userRoutes;

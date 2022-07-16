@@ -15,57 +15,71 @@ describe('User model', () => {
     expect(userStore.create).toBeDefined();
   });
 
-  it('should have a delete method', () => {
-    expect(userStore.delete).toBeDefined();
-  });
-
   it('index method should list all users', async () => {
     const result = await userStore.index();
-    expect(result).toEqual([]);
+    expect(result).toEqual([
+      {
+        id: 1,
+        username: 'raymondw',
+        first_name: 'William',
+        last_name: 'Raymond',
+        password: result[0].password
+      },
+      {
+        id: 2,
+        username: 'newuser',
+        first_name: 'New',
+        last_name: 'User',
+        password: result[1].password
+      }
+    ]);
   });
 
   it('create method should add user', async () => {
     const result = await userStore.create({
-      first_name: 'William',
-      last_name: 'Raymond',
+      username: 'chenc',
+      first_name: 'Caroline',
+      last_name: 'Chen',
       password: 'badPassword'
     });
     expect(result).toEqual({
-      id: 2,
-      first_name: 'William',
-      last_name: 'Raymond',
-      password: 'badPassword'
+      id: 3,
+      username: 'chenc',
+      first_name: 'Caroline',
+      last_name: 'Chen',
+      password: result.password
     });
   });
 
   it('show method should return the specified user', async () => {
-    const result = await userStore.show('2');
+    const result = await userStore.show('3');
     expect(result).toEqual({
-      id: 2,
-      first_name: 'William',
-      last_name: 'Raymond',
-      password: 'badPassword'
+      id: 3,
+      username: 'chenc',
+      first_name: 'Caroline',
+      last_name: 'Chen',
+      password: result.password
     });
   });
 
-  it('update method should update a user', async () => {
-    const result = await userStore.update({
-      id: 2,
-      first_name: 'Caroline',
-      last_name: 'Chen',
-      password: 'newPassword'
-    });
+  it('should authenticate a user with the correct password', async () => {
+    const result = await userStore.authenticate('chenc', 'badPassword');
     expect(result).toEqual({
-      id: 2,
+      id: 3,
+      username: 'chenc',
       first_name: 'Caroline',
       last_name: 'Chen',
-      password: 'newPassword'
-    });
+      password: result?.password as string
+    })
   });
 
-  it('delete method should remove a user', async () => {
-    await userStore.delete('2');
-    const result = await userStore.index();
-    expect(result).toEqual([]);
+  it('should not authenticate a user with an incorrect password', async () => {
+    const result = await userStore.authenticate('chenc', 'incorrectPassword');
+    expect(result).toBeNull();
+  });
+
+  it('should not authenticate a user that does not exist', async () => {
+    const result = await userStore.authenticate('bogusUsername', 'bogusPassword');
+    expect(result).toBeNull();
   });
 });

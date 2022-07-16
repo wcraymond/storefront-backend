@@ -38,38 +38,10 @@ const create = async (req: Request, res: Response) => {
   }
 }
 
-const update = async (req: Request, res: Response) => {
-  try {
-    const order: Order = {
-      id: parseInt(req.params.id),
-      status: req.body.status,
-      user_id: parseInt(req.body.user_id)
-    };
-
-    const updatedOrder = await store.update(order);
-    res.json(updatedOrder);
-  } catch (err) {
-    res.status(400);
-    res.json(err);
-  }
-}
-
-const destroy = async (req: Request, res: Response) => {
-  try {
-    const deleted = await store.delete(req.params.id);
-    res.json(deleted);
-  } catch (err) {
-    res.status(400);
-    res.json(err);
-  }
-}
-
 const orderRoutes = (app: express.Application) => {
   app.get('/orders', index);
   app.get('/orders/:id', show);
   app.post('/orders', create);
-  app.put('/orders/:id', update);
-  app.delete('/orders/:id', destroy);
 }
 
 export default orderRoutes;
