@@ -40,10 +40,21 @@ const create = async (req: Request, res: Response) => {
   }
 }
 
+const productsByCategory = async (req: Request, res: Response) => {
+  try {
+    const products = await store.productsByCategory(req.params.category);
+    res.json(products);
+  } catch (err) {
+    res.status(400);
+    res.json(err);
+  }
+}
+
 const productRoutes = (app: express.Application) => {
   app.get('/products', index);
   app.get('/products/:id', show);
   app.post('/products', verifyAuthToken, create);
+  app.get('/products/category/:category', productsByCategory);
 }
 
 export default productRoutes;

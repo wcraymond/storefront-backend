@@ -50,4 +50,14 @@ describe('Product model', () => {
       category: 'Toys'
     });
   });
+
+  it('productByCategory should return all products in a category', async () => {
+    const result = await productStore.productsByCategory('Toys');
+    expect(result).toEqual([{
+      id: 2,
+      name: 'Test Product',
+      price: 100,
+      category: 'Toys'
+    }]);
+  })
 });
