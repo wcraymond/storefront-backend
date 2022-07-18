@@ -44,5 +44,10 @@ describe('Test product endpoints', () => {
         category: 'Negative'
       });
     expect(response.status).toBe(401);
-  })
+  });
+
+  it('GET /products/category/:category', async () => {
+    const response = await request.get('/products/category/Tests');
+    expect(response.status).toBe(200);
+  });
 });
