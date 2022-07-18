@@ -3,18 +3,9 @@ import app from '../../../../src/server';
 
 const request = supertest(app);
 
-let token = '';
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJ1c2VybmFtZSI6InJheW1vbmR3IiwiZmlyc3RfbmFtZSI6IldpbGxpYW0iLCJsYXN0X25hbWUiOiJSYXltb25kIiwicGFzc3dvcmQiOiIkMmIkMTAkcURvUE1WRmpkaEFGRjJpWTBMaGJsLmZJbTEwMzcwd0lVTlVXQ0NKLlQzZlM0SFpaNUtxNVMifSwiaWF0IjoxNjU4MzQwNzE4fQ.ogP8L9L8z_37VLV5CYel3vny9ln3CrdqTIbZCfp9zF4';
 
 describe('Test product endpoints', () => {
-  beforeAll(async () => {
-    const response = await request.post('/users/authenticate')
-      .send({
-        username: 'raymondw',
-        password: 'newPassword'
-      });
-    token = response.body;
-  });
-
   it('POST /products', async () => {
     const response = await request.post('/products')
       .send({
@@ -44,5 +35,10 @@ describe('Test product endpoints', () => {
         category: 'Negative'
       });
     expect(response.status).toBe(401);
-  })
+  });
+
+  it('GET /products/category/:category', async () => {
+    const response = await request.get('/products/category/Tests');
+    expect(response.status).toBe(200);
+  });
 });

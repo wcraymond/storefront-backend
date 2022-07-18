@@ -43,4 +43,18 @@ export class ProductStore {
       throw new Error(`Cannot create product ${product.name}: ${err}`);
     }
   }
+
+  async productsByCategory(category: string): Promise<Product[]> {
+    try {
+      const conn = await client.connect();
+      const sql = `SELECT id, name, price, category
+                     FROM products
+                    WHERE category = ($1)`;
+      const result = await conn.query(sql, [category]);
+      conn.release();
+      return result.rows;
+    } catch (err) {
+      throw new Error(`Could not get products by category ${category}: ${err}`);
+    }
+  }
 }

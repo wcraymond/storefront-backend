@@ -6,15 +6,6 @@ const request = supertest(app);
 const userStore = new UserStore();
 
 describe('Order endpoints', () => {
-  beforeAll(async () => {
-    await userStore.create({
-      username: 'raymondw',
-      first_name: 'William',
-      last_name: 'Raymond',
-      password: 'newPassword'
-    });
-  });
-
   it('POST /orders', async () => {
     const response = await request.post('/orders')
       .send({
