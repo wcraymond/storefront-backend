@@ -66,7 +66,7 @@ const destroy = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
-const productsByCategory = async (req: Request, res: Response): Promise<void> => {
+const productsByCategory = async (req: Request, res: Response) => {
   try {
     const products = await store.productsByCategory(req.params.category);
     res.json(products);
