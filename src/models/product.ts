@@ -44,6 +44,30 @@ export class ProductStore {
     }
   }
 
+  async update(product: Product): Promise<Product> {
+    try {
+      const conn = await client.connect();
+      const sql = 'UPDATE products SET name = ($1), price = ($2), category = ($3) WHERE id = ($4) RETURNING *';
+      const result = await conn.query(sql, [product.name, product.price, product.category, product.id]);
+      conn.release();
+      return result.rows[0];
+    } catch (err) {
+      throw new Error(`Cannot update product ${product.id}: ${err}`);
+    }
+  }
+
+  async delete(id: string): Promise<Product> {
+    try {
+      const conn = await client.connect();
+      const sql = 'DELETE FROM products WHERE id = ($1)';
+      const result = await conn.query(sql, [id]);
+      conn.release();
+      return result.rows[0];
+    } catch (err) {
+      throw new Error(`Cannot delete product ${id}: ${err}`);
+    }
+  }
+
   async productsByCategory(category: string): Promise<Product[]> {
     try {
       const conn = await client.connect();

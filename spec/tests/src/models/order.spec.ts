@@ -15,15 +15,17 @@ describe('Order model', () => {
     expect(orderStore.create).toBeDefined();
   });
 
+  it('should have an update method', () => {
+    expect(orderStore.update).toBeDefined();
+  });
+
+  it('should have a delete method', () => {
+    expect(orderStore.delete).toBeDefined();
+  });
+
   it('index method should list all orders', async () => {
     const result = await orderStore.index();
-    expect(result).toEqual([
-      {
-        id: 1,
-        status: 'Complete',
-        user_id: 1
-      }
-    ]);
+    expect(result).toEqual([]);
   });
 
   it('create method should add an order', async () => {
@@ -46,4 +48,24 @@ describe('Order model', () => {
       user_id: 1
     });
   });
+
+  it('update method should update the specified order', async () => {
+    const orderToUpdate = {
+      id: 2,
+      status: 'Complete',
+      user_id: 1
+    };
+    const result = await orderStore.update(orderToUpdate);
+    expect(result).toEqual({
+      id: 2,
+      status: 'Complete',
+      user_id: 1
+    });
+  });
+
+  it('delete method should delete the specified order', async () => {
+    await orderStore.delete('2');
+    const result = await orderStore.show('2');
+    expect(result).toBeUndefined();
+  })
 });

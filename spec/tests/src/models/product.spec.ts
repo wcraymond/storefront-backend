@@ -1,4 +1,4 @@
-import { ProductStore } from '../../../../src/models/product';
+import { Product, ProductStore } from '../../../../src/models/product';
 
 const productStore = new ProductStore();
 
@@ -15,16 +15,17 @@ describe('Product model', () => {
     expect(productStore.create).toBeDefined();
   });
 
+  it('should have an update method', () => {
+    expect(productStore.update).toBeDefined();
+  });
+
+  it('should have a delete method', () => {
+    expect(productStore.delete).toBeDefined();
+  });
+
   it('index method should list all products', async () => {
     const result = await productStore.index();
-    expect(result).toEqual([
-      {
-        id: 1,
-        name: 'Test Product',
-        price: 10,
-        category: 'Tests'
-      }
-    ]);
+    expect(result).toEqual([]);
   });
 
   it('create method should add a product', async () => {
@@ -51,13 +52,29 @@ describe('Product model', () => {
     });
   });
 
+  it('update method should update the specified product', async () => {
+    const productToUpdate: Product = {
+      id: 2,
+      name: 'New Name',
+      price: 200,
+      category: 'New Category'
+    };
+    const result = await productStore.update(productToUpdate);
+    expect(result).toEqual({
+      id: 2,
+      name: 'New Name',
+      price: 200,
+      category: 'New Category'
+    });
+  });
+
   it('productByCategory should return all products in a category', async () => {
-    const result = await productStore.productsByCategory('Toys');
+    const result = await productStore.productsByCategory('New Category');
     expect(result).toEqual([{
       id: 2,
-      name: 'Test Product',
-      price: 100,
-      category: 'Toys'
+      name: 'New Name',
+      price: 200,
+      category: 'New Category'
     }]);
-  })
+  });
 });
