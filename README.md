@@ -35,9 +35,17 @@ TOKEN_SECRET=iAmAVerySecretTokenSecret
 To start the server, follow these steps:
 
 * Run `npm install` to install all required packages
-* Run `db-migrate db:create storefront_dev` to create the dev database
+* Run `docker-compose up` to start the database container
 * Run `db-migrate up` to apply all migrations
+* Run `npm run tsc` to build the Node project
 * Run `npm run start` to start the server
+
+## Connecting to the storefront_dev database
+Use the following command to connect to the storefront_dev database using psql:
+
+`psql -h 127.0.0.1 -d storefront_dev -U \<POSTGRES_USER\>`
+
+When prompted, enter the value of POSTGRES_PASSWORD.
 
 ## Testing
 To run unit tests, follow these steps:
